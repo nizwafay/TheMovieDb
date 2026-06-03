@@ -2,6 +2,7 @@ package com.papay.themoviedb.core.data.movie.remote
 
 import com.papay.themoviedb.core.data.movie.datasource.MovieRemoteDataSource
 import com.papay.themoviedb.core.data.movie.toModel
+import com.papay.themoviedb.core.model.MovieDetail
 import com.papay.themoviedb.core.model.MoviePage
 import com.papay.themoviedb.core.model.MovieVideo
 import com.papay.themoviedb.core.network.RetrofitRemoteDataSource
@@ -17,6 +18,12 @@ class MovieRemoteDataSourceImpl(
                 genreId = genreId,
                 page = page
             )
+        }.toModel()
+    }
+
+    override suspend fun getMovieDetail(movieId: Int): MovieDetail {
+        return retrofitRemoteDataSource.execute {
+            movieApiService.getMovieDetail(movieId = movieId)
         }.toModel()
     }
 

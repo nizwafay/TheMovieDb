@@ -6,6 +6,7 @@ import com.papay.themoviedb.core.data.movie.datasource.MovieRemoteDataSource
 import com.papay.themoviedb.core.domain.repository.MovieRepository
 import com.papay.themoviedb.core.domain.result.DataResult
 import com.papay.themoviedb.core.model.Movie
+import com.papay.themoviedb.core.model.MovieDetail
 import com.papay.themoviedb.core.model.MoviePage
 import com.papay.themoviedb.core.model.MovieVideo
 import kotlinx.coroutines.withContext
@@ -17,6 +18,10 @@ class MovieRepositoryImpl(
 ) : MovieRepository {
     override suspend fun getMovie(id: Int): Movie? = withContext(dispatcherProvider.io) {
         movieLocalDataSource.getMovie(id = id)
+    }
+
+    override suspend fun getMovieDetail(movieId: Int): MovieDetail = withContext(dispatcherProvider.io) {
+        movieRemoteDataSource.getMovieDetail(movieId = movieId)
     }
 
     override suspend fun getMoviesByGenre(genreId: Int, page: Int): DataResult<MoviePage> = withContext(dispatcherProvider.io) {

@@ -13,6 +13,12 @@ interface MovieApiService {
         @Query("page") page: Int = 1
     ): MovieResponseDto
 
+    @GET("movie/{movie_id}")
+    suspend fun getMovieDetail(
+        @Path("movie_id") movieId: Int,
+        @Query("language") language: String = "en-US"
+    ): MovieDetailDto
+
     @GET("movie/{movie_id}/videos")
     suspend fun getMovieVideos(
         @Path("movie_id") movieId: Int,

@@ -6,6 +6,10 @@
     <string name="movie_list_back">Back</string>
     <string name="movie_detail_title">Movie detail</string>
     <string name="movie_detail_loading">Loading movie detail</string>
-    <string name="movie_detail_no_trailer_title">No trailer found</string>
-    <string name="movie_detail_no_trailer_description">This movie does not have a YouTube trailer yet.</string>
+    <string name="movie_detail_release_date_label">Release date</string>
+    <string name="movie_detail_genres_label">Genres</string>
+    <string name="movie_detail_spoken_languages_label">Spoken languages</string>
+    <string name="movie_detail_rating_label">Rating</string>
+    <string name="movie_detail_rating_value">%1$.1f of %2$d votes</string>
+    <string name="movie_detail_unknown_value">Unknown</string>
 </resources>
