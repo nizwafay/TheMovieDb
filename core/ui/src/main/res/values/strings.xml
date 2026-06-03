@@ -1,0 +1,14 @@
+<resources>
+    <string name="state_empty_title">Nothing here yet</string>
+    <string name="state_empty_description">Try again in a moment.</string>
+    <string name="state_showing_cached_description">Saved data is still available. Try refreshing again later.</string>
+    <string name="error_connection_title">Unable to connect</string>
+    <string name="error_connection_description">We could not load this content right now.</string>
+    <string name="error_rate_limited_title">Too many requests</string>
+    <string name="error_rate_limited_description">Please wait a moment before trying again.</string>
+    <string name="error_offline_title">You are offline</string>
+    <string name="error_offline_description">Check your connection and try again.</string>
+    <string name="error_load_title">Unable to load</string>
+    <string name="error_load_description">Something went wrong. Please try again.</string>
+    <string name="action_retry">Retry</string>
+</resources>
