@@ -13,6 +13,10 @@ class MovieLocalDataSourceImpl(
         return movieDao.getMoviesByGenre(genreId = genreId).map { movie -> movie.toModel() }
     }
 
+    override suspend fun getMovie(id: Int): Movie? {
+        return movieDao.getMovie(id = id)?.toModel()
+    }
+
     override suspend fun upsertMovies(genreId: Int, movies: List<Movie>) {
         movieDao.upsertMovies(movies.map { movie -> movie.toEntity(genreId = genreId) })
     }

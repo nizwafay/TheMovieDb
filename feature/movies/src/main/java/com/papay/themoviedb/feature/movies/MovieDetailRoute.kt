@@ -3,22 +3,18 @@ package com.papay.themoviedb.feature.movies
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.papay.themoviedb.core.model.Movie
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MovieListRoute(
+fun MovieDetailRoute(
     onBackClick: () -> Unit,
-    onMovieClick: (Movie) -> Unit,
-    viewModel: MovieListViewModel = koinViewModel()
+    viewModel: MovieDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    MovieListScreen(
+    MovieDetailScreen(
         uiState = uiState,
         onBackClick = onBackClick,
-        onRetryClick = viewModel::loadMovies,
-        onLoadMore = viewModel::loadMoreMovies,
-        onMovieClick = onMovieClick
+        onRetryClick = viewModel::loadMovieDetail
     )
 }

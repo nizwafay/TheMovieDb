@@ -4,4 +4,8 @@
     <string name="movie_list_title">%1$s movies</string>
     <string name="movie_list_unknown_genre">Movies</string>
     <string name="movie_list_back">Back</string>
+    <string name="movie_detail_title">Movie detail</string>
+    <string name="movie_detail_loading">Loading movie detail</string>
+    <string name="movie_detail_no_trailer_title">No trailer found</string>
+    <string name="movie_detail_no_trailer_description">This movie does not have a YouTube trailer yet.</string>
 </resources>

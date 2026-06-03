@@ -1,6 +1,7 @@
 package com.papay.themoviedb.feature.movies
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +59,7 @@ fun MovieListScreen(
     onBackClick: () -> Unit,
     onRetryClick: () -> Unit,
     onLoadMore: () -> Unit,
+    onMovieClick: (Movie) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = rememberUiMessageSnackbarHostState(
@@ -101,6 +103,7 @@ fun MovieListScreen(
                     canLoadMore = uiState.canLoadMore,
                     onRefresh = onRetryClick,
                     onLoadMore = onLoadMore,
+                    onMovieClick = onMovieClick,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
@@ -142,6 +145,7 @@ private fun MovieListContent(
     canLoadMore: Boolean,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
+    onMovieClick: (Movie) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val gridState = rememberLazyGridState()
@@ -187,7 +191,9 @@ private fun MovieListContent(
             ) { movie ->
                 MovieCard(
                     movie = movie,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onMovieClick(movie) }
                 )
             }
 
@@ -317,7 +323,8 @@ private fun MovieListScreenPreview() {
             ),
             onBackClick = {},
             onRetryClick = {},
-            onLoadMore = {}
+            onLoadMore = {},
+            onMovieClick = {}
         )
     }
 }
