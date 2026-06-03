@@ -1,4 +1,4 @@
-package com.papay.themoviedb.feature.movies
+package com.papay.themoviedb.feature.movies.list
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState

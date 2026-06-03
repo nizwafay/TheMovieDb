@@ -1,4 +1,4 @@
-package com.papay.themoviedb.feature.movies
+package com.papay.themoviedb.feature.movies.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,10 +17,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -50,6 +53,7 @@ import com.papay.themoviedb.core.ui.RefreshingCard
 import com.papay.themoviedb.core.ui.UiLoadState
 import com.papay.themoviedb.core.ui.UiMessageContent
 import com.papay.themoviedb.core.ui.rememberUiMessageSnackbarHostState
+import com.papay.themoviedb.feature.movies.R
 import com.papay.themoviedb.core.ui.R as CoreUiR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -131,7 +135,10 @@ private fun MovieListTopAppBar(
         },
         navigationIcon = {
             IconButton(onClick = onBackClick) {
-                Text(text = "<")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.movie_list_back)
+                )
             }
         }
     )

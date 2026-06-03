@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.papay.themoviedb.feature.genres.GenreListRoute
-import com.papay.themoviedb.feature.movies.MovieDetailRoute
-import com.papay.themoviedb.feature.movies.MovieListRoute
+import com.papay.themoviedb.feature.movies.detail.MovieDetailRoute
+import com.papay.themoviedb.feature.movies.list.MovieListRoute
 
 @Composable
 fun AppNavHost(
@@ -55,9 +55,7 @@ fun AppNavHost(
                 }
             )
         ) {
-            MovieDetailRoute(
-                onBackClick = navController::popBackStack
-            )
+            MovieDetailRoute()
         }
     }
 }

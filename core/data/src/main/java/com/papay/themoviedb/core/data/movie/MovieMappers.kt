@@ -5,11 +5,15 @@ import com.papay.themoviedb.core.data.genre.toModel
 import com.papay.themoviedb.core.model.Movie
 import com.papay.themoviedb.core.model.MovieDetail
 import com.papay.themoviedb.core.model.MoviePage
+import com.papay.themoviedb.core.model.MovieReview
+import com.papay.themoviedb.core.model.MovieReviewPage
 import com.papay.themoviedb.core.model.MovieVideo
 import com.papay.themoviedb.core.model.SpokenLanguage
 import com.papay.themoviedb.core.network.movie.MovieDetailDto
 import com.papay.themoviedb.core.network.movie.MovieDto
 import com.papay.themoviedb.core.network.movie.MovieResponseDto
+import com.papay.themoviedb.core.network.movie.MovieReviewDto
+import com.papay.themoviedb.core.network.movie.MovieReviewResponseDto
 import com.papay.themoviedb.core.network.movie.SpokenLanguageDto
 import com.papay.themoviedb.core.network.movie.MovieVideoDto
 
@@ -54,6 +58,25 @@ fun MovieDetailDto.toModel(): MovieDetail {
 
 fun SpokenLanguageDto.toModel(): SpokenLanguage {
     return SpokenLanguage(name = englishName ?: name.orEmpty())
+}
+
+fun MovieReviewResponseDto.toModel(): MovieReviewPage {
+    return MovieReviewPage(
+        reviews = results.map { review -> review.toModel() },
+        page = page,
+        totalPages = totalPages,
+        totalResults = totalResults
+    )
+}
+
+fun MovieReviewDto.toModel(): MovieReview {
+    return MovieReview(
+        id = id,
+        author = author,
+        content = content,
+        createdAt = createdAt,
+        rating = authorDetails?.rating
+    )
 }
 
 fun MovieVideoDto.toModel(): MovieVideo {

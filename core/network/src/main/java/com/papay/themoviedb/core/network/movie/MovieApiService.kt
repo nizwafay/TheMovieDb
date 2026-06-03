@@ -19,6 +19,12 @@ interface MovieApiService {
         @Query("language") language: String = "en-US"
     ): MovieDetailDto
 
+    @GET("movie/{movie_id}/reviews")
+    suspend fun getMovieReviews(
+        @Path("movie_id") movieId: Int,
+        @Query("page") page: Int = 1
+    ): MovieReviewResponseDto
+
     @GET("movie/{movie_id}/videos")
     suspend fun getMovieVideos(
         @Path("movie_id") movieId: Int,

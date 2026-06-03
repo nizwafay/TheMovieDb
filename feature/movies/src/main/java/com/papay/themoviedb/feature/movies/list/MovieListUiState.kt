@@ -1,4 +1,4 @@
-package com.papay.themoviedb.feature.movies
+package com.papay.themoviedb.feature.movies.list
 
 import com.papay.themoviedb.core.model.Movie
 import com.papay.themoviedb.core.ui.UiLoadState

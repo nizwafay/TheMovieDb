@@ -1,8 +1,8 @@
 package com.papay.themoviedb.di
 
 import com.papay.themoviedb.feature.genres.GenreListViewModel
-import com.papay.themoviedb.feature.movies.MovieDetailViewModel
-import com.papay.themoviedb.feature.movies.MovieListViewModel
+import com.papay.themoviedb.feature.movies.detail.MovieDetailViewModel
+import com.papay.themoviedb.feature.movies.list.MovieListViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 

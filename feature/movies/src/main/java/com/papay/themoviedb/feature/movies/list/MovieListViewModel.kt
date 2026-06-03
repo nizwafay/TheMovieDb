@@ -1,4 +1,4 @@
-package com.papay.themoviedb.feature.movies
+package com.papay.themoviedb.feature.movies.list
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

@@ -11,5 +11,13 @@
     <string name="movie_detail_spoken_languages_label">Spoken languages</string>
     <string name="movie_detail_rating_label">Rating</string>
     <string name="movie_detail_rating_value">%1$.1f of %2$d votes</string>
+    <string name="movie_detail_reviews_title">Reviews</string>
+    <string name="movie_detail_close_reviews">Close</string>
+    <string name="movie_detail_no_reviews">No reviews yet.</string>
+    <string name="movie_detail_review_rating">%1$.1f/10</string>
     <string name="movie_detail_unknown_value">Unknown</string>
+    <plurals name="movie_detail_review_count">
+        <item quantity="one">%1$d comment</item>
+        <item quantity="other">%1$d comments</item>
+    </plurals>
 </resources>

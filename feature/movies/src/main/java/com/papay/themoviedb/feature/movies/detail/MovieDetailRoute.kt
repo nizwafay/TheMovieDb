@@ -1,4 +1,4 @@
-package com.papay.themoviedb.feature.movies
+package com.papay.themoviedb.feature.movies.detail
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -7,14 +7,16 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MovieDetailRoute(
-    onBackClick: () -> Unit,
     viewModel: MovieDetailViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     MovieDetailScreen(
         uiState = uiState,
-        onBackClick = onBackClick,
-        onRetryClick = viewModel::loadMovieDetail
+        onRetryClick = viewModel::loadMovieDetail,
+        onLoadMoreReviews = viewModel::loadMoreReviews,
+        onRetryReviews = viewModel::retryReviews,
+        onShowAllReviews = viewModel::showAllReviews,
+        onHideAllReviews = viewModel::hideAllReviews
     )
 }
