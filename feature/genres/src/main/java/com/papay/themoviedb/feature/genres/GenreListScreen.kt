@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -38,6 +39,7 @@ import com.papay.themoviedb.core.ui.R as CoreUiR
 @Composable
 fun GenreListScreen(
     uiState: GenreListUiState,
+    onGenreClick: (Genre) -> Unit,
     onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -72,6 +74,7 @@ fun GenreListScreen(
                 GenreListContent(
                     genres = uiState.genres,
                     isRefreshing = uiState.loadState == UiLoadState.Refreshing,
+                    onGenreClick = onGenreClick,
                     onRefresh = onRetryClick,
                     modifier = Modifier
                         .fillMaxSize()
@@ -86,6 +89,7 @@ fun GenreListScreen(
 private fun GenreListContent(
     genres: List<Genre>,
     isRefreshing: Boolean,
+    onGenreClick: (Genre) -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -131,6 +135,7 @@ private fun GenreListContent(
             ) { index, genre ->
                 GenreCard(
                     genre = genre,
+                    onClick = { onGenreClick(genre) },
                     colors = genreCardColors(index)
                 )
             }
@@ -141,13 +146,15 @@ private fun GenreListContent(
 @Composable
 private fun GenreCard(
     genre: Genre,
+    onClick: () -> Unit,
     colors: GenreCardColors,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(1.18f),
+            .aspectRatio(1.18f)
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = colors.container,
@@ -215,6 +222,7 @@ private fun GenreListScreenPreview() {
                     Genre(id = 9648, name = "Mystery")
                 )
             ),
+            onGenreClick = {},
             onRetryClick = {}
         )
     }

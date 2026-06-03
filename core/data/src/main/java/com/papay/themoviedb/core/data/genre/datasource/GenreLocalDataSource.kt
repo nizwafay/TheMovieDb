@@ -4,5 +4,6 @@ import com.papay.themoviedb.core.model.Genre
 
 interface GenreLocalDataSource {
     suspend fun getGenres(): List<Genre>
+    suspend fun getGenre(id: Int): Genre?
     suspend fun upsertGenres(genres: List<Genre>)
 }

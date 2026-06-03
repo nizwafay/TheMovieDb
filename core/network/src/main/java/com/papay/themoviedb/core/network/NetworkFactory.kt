@@ -5,7 +5,6 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import com.papay.themoviedb.core.network.genre.GenreApiService
 
 object NetworkFactory {
     fun createMoshi(): Moshi {
@@ -31,10 +30,4 @@ object NetworkFactory {
             .build()
     }
 
-    fun createGenreApiService(accessToken: String): GenreApiService {
-        return createRetrofit(
-            moshi = createMoshi(),
-            okHttpClient = createOkHttpClient(accessToken = accessToken)
-        ).create(GenreApiService::class.java)
-    }
 }

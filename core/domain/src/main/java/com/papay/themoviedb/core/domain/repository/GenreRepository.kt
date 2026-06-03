@@ -5,4 +5,5 @@ import com.papay.themoviedb.core.domain.result.DataResult
 
 interface GenreRepository {
     suspend fun getGenres(): DataResult<List<Genre>>
+    suspend fun getGenre(id: Int): Genre?
 }

@@ -1,0 +1,21 @@
+package com.papay.themoviedb.core.data.movie.remote
+
+import com.papay.themoviedb.core.data.movie.datasource.MovieRemoteDataSource
+import com.papay.themoviedb.core.data.movie.toModel
+import com.papay.themoviedb.core.model.MoviePage
+import com.papay.themoviedb.core.network.RetrofitRemoteDataSource
+import com.papay.themoviedb.core.network.movie.MovieApiService
+
+class MovieRemoteDataSourceImpl(
+    private val movieApiService: MovieApiService,
+    private val retrofitRemoteDataSource: RetrofitRemoteDataSource
+) : MovieRemoteDataSource {
+    override suspend fun getMoviesByGenre(genreId: Int, page: Int): MoviePage {
+        return retrofitRemoteDataSource.execute {
+            movieApiService.getMoviesByGenre(
+                genreId = genreId,
+                page = page
+            )
+        }.toModel()
+    }
+}

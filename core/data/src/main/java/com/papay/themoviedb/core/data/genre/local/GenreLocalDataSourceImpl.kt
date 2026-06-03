@@ -13,6 +13,10 @@ class GenreLocalDataSourceImpl(
         return genreDao.getGenres().map { genre -> genre.toModel() }
     }
 
+    override suspend fun getGenre(id: Int): Genre? {
+        return genreDao.getGenre(id = id)?.toModel()
+    }
+
     override suspend fun upsertGenres(genres: List<Genre>) {
         genreDao.upsertGenres(genres.map { genre -> genre.toEntity() })
     }

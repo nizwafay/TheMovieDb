@@ -8,4 +8,5 @@ import org.koin.dsl.module
 val databaseModule = module {
     single { DatabaseFactory.create(context = androidContext()) }
     single { get<TheMovieDbDatabase>().genreDao() }
+    single { get<TheMovieDbDatabase>().movieDao() }
 }

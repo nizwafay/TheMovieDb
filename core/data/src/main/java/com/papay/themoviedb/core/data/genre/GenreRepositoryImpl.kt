@@ -21,4 +21,8 @@ class GenreRepositoryImpl(
             readCache = { genreLocalDataSource.getGenres() }
         )
     }
+
+    override suspend fun getGenre(id: Int): Genre? = withContext(dispatcherProvider.io) {
+        genreLocalDataSource.getGenre(id = id)
+    }
 }

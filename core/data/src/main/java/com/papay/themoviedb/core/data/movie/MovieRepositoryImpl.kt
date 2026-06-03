@@ -1,0 +1,52 @@
+package com.papay.themoviedb.core.data.movie
+
+import com.papay.themoviedb.core.data.coroutine.DispatcherProvider
+import com.papay.themoviedb.core.data.movie.datasource.MovieLocalDataSource
+import com.papay.themoviedb.core.data.movie.datasource.MovieRemoteDataSource
+import com.papay.themoviedb.core.domain.repository.MovieRepository
+import com.papay.themoviedb.core.domain.result.DataResult
+import com.papay.themoviedb.core.model.MoviePage
+import kotlinx.coroutines.withContext
+
+class MovieRepositoryImpl(
+    private val movieLocalDataSource: MovieLocalDataSource,
+    private val movieRemoteDataSource: MovieRemoteDataSource,
+    private val dispatcherProvider: DispatcherProvider
+) : MovieRepository {
+    override suspend fun getMoviesByGenre(genreId: Int, page: Int): DataResult<MoviePage> = withContext(dispatcherProvider.io) {
+        val remoteResult = runCatching {
+            movieRemoteDataSource.getMoviesByGenre(
+                genreId = genreId,
+                page = page
+            )
+        }.onSuccess { moviePage ->
+            movieLocalDataSource.upsertMovies(
+                genreId = genreId,
+                movies = moviePage.movies
+            )
+        }
+
+        val cachedMovies = if (page == FirstPage) {
+            movieLocalDataSource.getMoviesByGenre(genreId = genreId)
+        } else {
+            emptyList()
+        }
+
+        if (cachedMovies.isNotEmpty()) {
+            DataResult(
+                data = MoviePage(
+                    movies = cachedMovies,
+                    page = FirstPage,
+                    totalPages = remoteResult.getOrNull()?.totalPages ?: FirstPage
+                ),
+                fallbackError = remoteResult.exceptionOrNull()
+            )
+        } else {
+            DataResult(data = remoteResult.getOrThrow())
+        }
+    }
+
+    private companion object {
+        const val FirstPage = 1
+    }
+}
