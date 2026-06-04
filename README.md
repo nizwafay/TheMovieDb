@@ -40,6 +40,8 @@ feature:movies
 
 The feature modules own UI and ViewModels. Domain owns use cases and repository contracts. Data owns repository implementations, data sources, mappers, and cache behavior. Network and database are kept as reusable infrastructure modules.
 
+Architecture tradeoffs are documented in [Architecture Decision Records](docs/adr/README.md).
+
 ## Current Features
 
 - Browse movie genres from TMDB with Room-backed cache fallback.
@@ -133,6 +135,18 @@ Run Detekt:
 ```
 
 Detekt uses the shared configuration in `config/detekt/detekt.yml`. The rule set keeps production code strict while allowing a few intentional Android, Compose, and test-helper patterns.
+
+## Debugging And Stability
+
+The app uses a small `core:logging` abstraction instead of direct Logcat calls across the codebase.
+
+- Debug builds use Logcat for safe diagnostic messages.
+- Release builds use no-op logging by default.
+- Network failures are logged as safe summaries only.
+- Tokens, headers, full URLs, query data, response bodies, and user-sensitive data must not be logged.
+- Crashlytics can be added later behind the same `AppLogger` interface.
+
+The logging decision is documented in [ADR 0001 - Application Logging](docs/adr/0001-application-logging.md).
 
 ## CI
 
