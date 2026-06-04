@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -34,7 +33,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -138,7 +136,6 @@ private fun MovieDetailContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LazyListLoadMoreEffect(
         listState = listState,
@@ -157,14 +154,6 @@ private fun MovieDetailContent(
     }
 
     BoxWithConstraints(modifier = modifier) {
-        if (isLandscape && trailer != null) {
-            TrailerPlayer(
-                movieTrailer = trailer,
-                modifier = Modifier.fillMaxSize()
-            )
-            return@BoxWithConstraints
-        }
-
         val trailerHeight = minOf(
             maxWidth / VideoAspectRatio,
             maxHeight * MaxTrailerHeightFraction
