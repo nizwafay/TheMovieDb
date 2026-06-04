@@ -1,0 +1,49 @@
+name: Android CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      TMDB_ACCESS_TOKEN: ci_read_access_token_for_build_validation
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Run unit tests and coverage verification
+        run: ./gradlew testDebugUnitTest jacocoDebugUnitTestReport jacocoDebugUnitTestCoverageVerification
+
+      - name: Run lint
+        run: ./gradlew lintDebug
+
+      - name: Assemble release
+        run: ./gradlew :app:assembleRelease

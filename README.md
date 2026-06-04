@@ -17,6 +17,7 @@ An Android movie discovery app built with Jetpack Compose and The Movie Database
 - YouTube-style fullscreen player behavior
 - Pure unit tests with MockK
 - JaCoCo coverage report and verification
+- GitHub Actions CI quality gates
 - Release hardening with R8, resource shrinking, backup restrictions, and cleartext traffic disabled
 
 ## Modules
@@ -119,6 +120,18 @@ Current rules:
 - Branch coverage minimum: `50%`
 
 The report is intentionally scoped to pure unit tests only. It excludes Android framework wiring and UI surfaces such as DI modules, Activity/Application, Compose screens/routes, generated classes, `core:database`, and `core:testing`.
+
+## CI
+
+GitHub Actions runs the main quality gates on pull requests and pushes to `main` or `master`:
+
+```bash
+./gradlew testDebugUnitTest jacocoDebugUnitTestReport jacocoDebugUnitTestCoverageVerification
+./gradlew lintDebug
+./gradlew :app:assembleRelease
+```
+
+The workflow uses a CI-only placeholder TMDB token for release compilation. Real app builds should still provide a real TMDB API Read Access Token through `local.properties` or `TMDB_ACCESS_TOKEN`.
 
 ## Testing Approach
 
