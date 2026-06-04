@@ -13,6 +13,8 @@ An Android movie discovery app built with Jetpack Compose and The Movie Database
 - Coroutines for async work
 - Pull to refresh and endless scrolling
 - Offline/cache-aware UI states
+- Movie detail with trailer playback, metadata, chips, rating, and reviews
+- YouTube-style fullscreen player behavior
 - Pure unit tests with MockK
 - JaCoCo coverage report and verification
 - Release hardening with R8, resource shrinking, backup restrictions, and cleartext traffic disabled
@@ -33,6 +35,19 @@ feature:movies
 ```
 
 The feature modules own UI and ViewModels. Domain owns use cases and repository contracts. Data owns repository implementations, data sources, mappers, and cache behavior. Network and database are kept as reusable infrastructure modules.
+
+## Current Features
+
+- Browse movie genres from TMDB with Room-backed cache fallback.
+- Browse movies by genre with endless scrolling.
+- Open movie details using only the movie id from navigation.
+- Show trailer, title, overview, rating, release date, genres, and spoken languages.
+- Show user reviews with a YouTube-inspired preview and expandable review panel.
+- Keep movie detail locked to portrait for reading.
+- Rotate automatically to landscape only when the YouTube player enters fullscreen.
+- Close fullscreen with either the YouTube control or the hardware back button.
+
+Reusable UI utilities live in `core:ui`, including loading/empty/error state pieces, pull-to-refresh support, pagination helpers, date formatting, message mapping, movie UI formatting, and the YouTube player wrapper.
 
 ## Setup
 
@@ -130,6 +145,7 @@ The app uses several baseline protections:
 - Backup and device-transfer data excluded
 - Release token validation
 - Basic ProGuard rules for Retrofit and Moshi reflection
+- Original launcher icon assets, with no third-party or copyrighted branding
 
 Important: shipping `BuildConfig.TMDB_ACCESS_TOKEN` inside the APK does not truly protect the token. R8 makes extraction harder, not impossible. For a production app, use a backend proxy so the TMDB token never ships to users.
 
