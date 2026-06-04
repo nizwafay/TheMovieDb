@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -136,6 +137,10 @@ private fun MovieDetailContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
+
+    BackHandler(enabled = isShowingAllReviews) {
+        onHideAllReviews()
+    }
 
     LazyListLoadMoreEffect(
         listState = listState,
