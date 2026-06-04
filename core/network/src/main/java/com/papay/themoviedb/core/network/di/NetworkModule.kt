@@ -11,7 +11,7 @@ fun networkModule(accessToken: String) = module {
     single { NetworkFactory.createMoshi() }
     single { NetworkFactory.createOkHttpClient(accessToken = accessToken) }
     single { NetworkFactory.createRetrofit(moshi = get(), okHttpClient = get()) }
-    single { RetrofitRemoteDataSource() }
+    single { RetrofitRemoteDataSource(logger = get()) }
     single { get<Retrofit>().create(GenreApiService::class.java) }
     single { get<Retrofit>().create(MovieApiService::class.java) }
 }

@@ -21,6 +21,7 @@ val jacocoCoveredProjects = setOf(
     ":app",
     ":core:data",
     ":core:domain",
+    ":core:logging",
     ":core:model",
     ":core:network",
     ":core:ui",

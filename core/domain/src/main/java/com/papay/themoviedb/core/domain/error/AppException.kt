@@ -12,16 +12,19 @@ sealed class AppException(
         message = "TMDB access token is not a read access token."
     )
 
-    class Unauthorized : AppException(
-        message = "TMDB rejected the access token."
+    class Unauthorized(cause: Throwable? = null) : AppException(
+        message = "TMDB rejected the access token.",
+        cause = cause
     )
 
-    class RateLimited : AppException(
-        message = "TMDB rate limit reached."
+    class RateLimited(cause: Throwable? = null) : AppException(
+        message = "TMDB rate limit reached.",
+        cause = cause
     )
 
-    class ServerError : AppException(
-        message = "TMDB returned a server error."
+    class ServerError(cause: Throwable? = null) : AppException(
+        message = "TMDB returned a server error.",
+        cause = cause
     )
 
     class NetworkUnavailable(cause: Throwable) : AppException(

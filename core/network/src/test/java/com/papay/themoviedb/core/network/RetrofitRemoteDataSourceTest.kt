@@ -1,9 +1,14 @@
 package com.papay.themoviedb.core.network
 
 import com.papay.themoviedb.core.domain.error.AppException
+import com.papay.themoviedb.core.logging.AppLogger
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
@@ -14,8 +19,15 @@ import retrofit2.Response
 import java.io.IOException
 
 class RetrofitRemoteDataSourceTest {
-    private val remoteDataSource = RetrofitRemoteDataSource()
+    private val logger = mockk<AppLogger>()
+    private val remoteDataSource = RetrofitRemoteDataSource(logger = logger)
     private val apiCall = mockk<ApiCall>()
+
+    init {
+        every { logger.debug(any(), any()) } just Runs
+        every { logger.warning(any(), any()) } just Runs
+        every { logger.error(any(), any(), any()) } just Runs
+    }
 
     @Test
     fun `execute returns api result when api call succeeds`() = runTest {
@@ -25,6 +37,9 @@ class RetrofitRemoteDataSourceTest {
 
         assertEquals(ApiResult, result)
         coVerify(exactly = 1) { apiCall.execute() }
+        verify(exactly = 0) { logger.debug(any(), any()) }
+        verify(exactly = 0) { logger.warning(any(), any()) }
+        verify(exactly = 0) { logger.error(any(), any(), any()) }
     }
 
     @Test
@@ -36,6 +51,13 @@ class RetrofitRemoteDataSourceTest {
                 remoteDataSource.execute { apiCall.execute() }
             }
         }
+
+        verify(exactly = 2) {
+            logger.warning(
+                tag = "Network",
+                message = "Request was rejected by the remote service."
+            )
+        }
     }
 
     @Test
@@ -44,6 +66,13 @@ class RetrofitRemoteDataSourceTest {
 
         assertThrows<AppException.RateLimited> {
             remoteDataSource.execute { apiCall.execute() }
+        }
+
+        verify(exactly = 1) {
+            logger.warning(
+                tag = "Network",
+                message = "Request was rate limited by the remote service."
+            )
         }
     }
 
@@ -55,6 +84,13 @@ class RetrofitRemoteDataSourceTest {
             assertThrows<AppException.ServerError> {
                 remoteDataSource.execute { apiCall.execute() }
             }
+        }
+
+        verify(exactly = 3) {
+            logger.warning(
+                tag = "Network",
+                message = "Remote service returned a server error."
+            )
         }
     }
 
@@ -68,6 +104,13 @@ class RetrofitRemoteDataSourceTest {
         }
 
         assertSame(httpException, exception.cause)
+        verify(exactly = 1) {
+            logger.error(
+                tag = "Network",
+                message = "Unexpected remote data source failure.",
+                throwable = httpException
+            )
+        }
     }
 
     @Test
@@ -80,6 +123,12 @@ class RetrofitRemoteDataSourceTest {
         }
 
         assertSame(ioException, exception.cause)
+        verify(exactly = 1) {
+            logger.debug(
+                tag = "Network",
+                message = "Network is unavailable."
+            )
+        }
     }
 
     @Test
@@ -92,6 +141,9 @@ class RetrofitRemoteDataSourceTest {
         }
 
         assertSame(appException, exception)
+        verify(exactly = 0) { logger.debug(any(), any()) }
+        verify(exactly = 0) { logger.warning(any(), any()) }
+        verify(exactly = 0) { logger.error(any(), any(), any()) }
     }
 
     @Test
@@ -104,6 +156,13 @@ class RetrofitRemoteDataSourceTest {
         }
 
         assertSame(throwable, exception.cause)
+        verify(exactly = 1) {
+            logger.error(
+                tag = "Network",
+                message = "Unexpected remote data source failure.",
+                throwable = throwable
+            )
+        }
     }
 
     private fun httpException(statusCode: Int): HttpException {

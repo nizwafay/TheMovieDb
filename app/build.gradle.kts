@@ -63,6 +63,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:logging"))
     implementation(project(":feature:genres"))
     implementation(project(":feature:movies"))
 

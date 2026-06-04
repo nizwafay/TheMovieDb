@@ -19,6 +19,7 @@ An Android movie discovery app built with Jetpack Compose and The Movie Database
 - JaCoCo coverage report and verification
 - Detekt static analysis
 - GitHub Actions CI quality gates
+- Debug Logcat logger with release no-op logging
 - Release hardening with R8, resource shrinking, backup restrictions, and cleartext traffic disabled
 
 ## Modules
@@ -28,6 +29,7 @@ app
 core:data
 core:database
 core:domain
+core:logging
 core:model
 core:network
 core:testing
