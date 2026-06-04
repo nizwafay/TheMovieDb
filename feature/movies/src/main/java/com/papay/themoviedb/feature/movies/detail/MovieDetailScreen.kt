@@ -53,8 +53,8 @@ import com.papay.themoviedb.core.ui.UiMessageContent
 import com.papay.themoviedb.core.ui.YouTubePlayer
 import com.papay.themoviedb.feature.movies.R
 import com.papay.themoviedb.feature.movies.reviews.CommentsPanelHeader
-import com.papay.themoviedb.feature.movies.reviews.ReviewListItems
 import com.papay.themoviedb.feature.movies.reviews.ReviewPreview
+import com.papay.themoviedb.feature.movies.reviews.reviewListItems
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,7 +213,7 @@ private fun MovieDetailContent(
                             ),
                             verticalArrangement = Arrangement.spacedBy(24.dp)
                         ) {
-                            ReviewListItems(
+                            reviewListItems(
                                 reviews = reviews,
                                 isLoadingReviews = isLoadingReviews,
                                 reviewMessage = reviewMessage,

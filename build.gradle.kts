@@ -1,4 +1,6 @@
 import org.gradle.api.tasks.testing.Test
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
 import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
@@ -7,6 +9,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.detekt) apply false
     jacoco
 }
 
@@ -51,9 +54,33 @@ val jacocoClassExcludes = listOf(
 
 subprojects {
     apply(plugin = "jacoco")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
 
     jacoco {
         toolVersion = "0.8.13"
+    }
+
+    extensions.configure<DetektExtension>("detekt") {
+        buildUponDefaultConfig = true
+        allRules = false
+        config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+        source.setFrom(
+            files(
+                "src/main/java",
+                "src/test/java"
+            )
+        )
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        jvmTarget = "17"
+        exclude("**/build/**")
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            md.required.set(false)
+            sarif.required.set(false)
+        }
     }
 
     tasks.withType<Test>().configureEach {

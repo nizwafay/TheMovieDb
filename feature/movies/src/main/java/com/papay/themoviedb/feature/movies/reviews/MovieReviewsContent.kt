@@ -99,7 +99,7 @@ internal fun CommentsPanelHeader(
     }
 }
 
-internal fun LazyListScope.ReviewListItems(
+internal fun LazyListScope.reviewListItems(
     reviews: List<MovieReview>,
     isLoadingReviews: Boolean,
     reviewMessage: UiMessage?,

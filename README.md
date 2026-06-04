@@ -17,6 +17,7 @@ An Android movie discovery app built with Jetpack Compose and The Movie Database
 - YouTube-style fullscreen player behavior
 - Pure unit tests with MockK
 - JaCoCo coverage report and verification
+- Detekt static analysis
 - GitHub Actions CI quality gates
 - Release hardening with R8, resource shrinking, backup restrictions, and cleartext traffic disabled
 
@@ -121,12 +122,23 @@ Current rules:
 
 The report is intentionally scoped to pure unit tests only. It excludes Android framework wiring and UI surfaces such as DI modules, Activity/Application, Compose screens/routes, generated classes, `core:database`, and `core:testing`.
 
+## Static Analysis
+
+Run Detekt:
+
+```bash
+./gradlew detekt
+```
+
+Detekt uses the shared configuration in `config/detekt/detekt.yml`. The rule set keeps production code strict while allowing a few intentional Android, Compose, and test-helper patterns.
+
 ## CI
 
 GitHub Actions runs the main quality gates on pull requests and pushes to `main` or `master`:
 
 ```bash
 ./gradlew testDebugUnitTest jacocoDebugUnitTestReport jacocoDebugUnitTestCoverageVerification
+./gradlew detekt
 ./gradlew lintDebug
 ./gradlew :app:assembleRelease
 ```

@@ -1,0 +1,81 @@
+build:
+  maxIssues: 0
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  LongMethod:
+    active: true
+    threshold: 80
+    excludes:
+      - '**/*Screen.kt'
+      - '**/*Content.kt'
+      - '**/YouTubePlayer.kt'
+  LongParameterList:
+    active: true
+    functionThreshold: 8
+    constructorThreshold: 8
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    excludes:
+      - '**/*Screen.kt'
+      - '**/*Content.kt'
+      - '**/*UiState.kt'
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
+    thresholdInClasses: 12
+    thresholdInInterfaces: 12
+    thresholdInObjects: 12
+    ignoreDeprecated: true
+    ignorePrivate: true
+    excludes:
+      - '**/*Screen.kt'
+      - '**/*Content.kt'
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: true
+    excludes:
+      - '**/RemoteFirstCache.kt'
+      - '**/RetrofitRemoteDataSource.kt'
+      - '**/src/test/**'
+  TooGenericExceptionThrown:
+    active: true
+    excludes:
+      - '**/src/test/**'
+
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated:
+      - Composable
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Z][A-Za-z0-9]*'
+  MatchingDeclarationName:
+    active: true
+    excludes:
+      - '**/GenreMappers.kt'
+      - '**/MovieMappers.kt'
+
+style:
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    active: true
+    maxLineLength: 140
+    excludeCommentStatements: true
+    excludes:
+      - '**/src/test/**'
+  ReturnCount:
+    active: true
+    max: 3
+    excludedFunctions:
+      - equals
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - Preview

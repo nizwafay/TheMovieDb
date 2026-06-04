@@ -29,7 +29,7 @@ fun LazyListLoadMoreEffect(
     LaunchedEffect(itemCount, canLoadMore, isLoadingMore, enabled) {
         snapshotFlow { shouldLoadMore.value }
             .collect { shouldLoad ->
-                if (enabled && shouldLoad && canLoadMore && !isLoadingMore) {
+                if (shouldLoad && canRequestLoadMore(enabled, canLoadMore, isLoadingMore)) {
                     onLoadMore()
                 }
             }
@@ -57,11 +57,19 @@ fun LazyGridLoadMoreEffect(
     LaunchedEffect(itemCount, canLoadMore, isLoadingMore, enabled) {
         snapshotFlow { shouldLoadMore.value }
             .collect { shouldLoad ->
-                if (enabled && shouldLoad && canLoadMore && !isLoadingMore) {
+                if (shouldLoad && canRequestLoadMore(enabled, canLoadMore, isLoadingMore)) {
                     onLoadMore()
                 }
             }
     }
+}
+
+private fun canRequestLoadMore(
+    enabled: Boolean,
+    canLoadMore: Boolean,
+    isLoadingMore: Boolean
+): Boolean {
+    return enabled && canLoadMore && !isLoadingMore
 }
 
 private const val DefaultLoadMoreThreshold = 6
