@@ -1,0 +1,117 @@
+package com.papay.themoviedb.feature.genres
+
+import com.papay.themoviedb.core.domain.error.AppException
+import com.papay.themoviedb.core.domain.repository.GenreRepository
+import com.papay.themoviedb.core.domain.result.DataResult
+import com.papay.themoviedb.core.domain.usecase.GetGenresUseCase
+import com.papay.themoviedb.core.model.Genre
+import com.papay.themoviedb.core.testing.MainDispatcherRule
+import com.papay.themoviedb.core.ui.R as CoreUiR
+import com.papay.themoviedb.core.ui.UiLoadState
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Rule
+import org.junit.Test
+import java.io.IOException
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class GenreListViewModelTest {
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    private val genreRepository = mockk<GenreRepository>()
+
+    @Test
+    fun `initial load shows genres when request succeeds`() = runTest {
+        coEvery { genreRepository.getGenres() } returns DataResult(data = Genres)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value
+        assertEquals(UiLoadState.Idle, uiState.loadState)
+        assertEquals(Genres, uiState.genres)
+        assertNull(uiState.message)
+    }
+
+    @Test
+    fun `initial load shows empty message when request returns no genres`() = runTest {
+        coEvery { genreRepository.getGenres() } returns DataResult(data = emptyList())
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value
+        assertEquals(UiLoadState.Idle, uiState.loadState)
+        assertTrue(uiState.genres.isEmpty())
+        assertEquals(CoreUiR.string.state_empty_title, uiState.message?.titleRes)
+        assertEquals(CoreUiR.string.state_empty_description, uiState.message?.descriptionRes)
+    }
+
+    @Test
+    fun `initial load shows error message when request fails`() = runTest {
+        coEvery { genreRepository.getGenres() } throws AppException.NetworkUnavailable(IOException())
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value
+        assertEquals(UiLoadState.Idle, uiState.loadState)
+        assertTrue(uiState.genres.isEmpty())
+        assertEquals(CoreUiR.string.error_offline_title, uiState.message?.titleRes)
+        assertEquals(CoreUiR.string.error_offline_description, uiState.message?.descriptionRes)
+    }
+
+    @Test
+    fun `refresh failure keeps cached genres and shows cached data message`() = runTest {
+        coEvery { genreRepository.getGenres() } returns DataResult(data = Genres)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        coEvery { genreRepository.getGenres() } throws AppException.ServerError()
+        viewModel.loadGenres()
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value
+        assertEquals(UiLoadState.Idle, uiState.loadState)
+        assertEquals(Genres, uiState.genres)
+        assertEquals(CoreUiR.string.error_load_title, uiState.message?.titleRes)
+        assertEquals(CoreUiR.string.state_showing_cached_description, uiState.message?.descriptionRes)
+    }
+
+    @Test
+    fun `fallback error with data shows data and cached data message`() = runTest {
+        coEvery { genreRepository.getGenres() } returns DataResult(
+            data = Genres,
+            fallbackError = AppException.RateLimited()
+        )
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val uiState = viewModel.uiState.value
+        assertEquals(UiLoadState.Idle, uiState.loadState)
+        assertEquals(Genres, uiState.genres)
+        assertEquals(CoreUiR.string.error_rate_limited_title, uiState.message?.titleRes)
+        assertEquals(CoreUiR.string.state_showing_cached_description, uiState.message?.descriptionRes)
+    }
+
+    private fun createViewModel(): GenreListViewModel {
+        return GenreListViewModel(
+            getGenres = GetGenresUseCase(genreRepository = genreRepository)
+        )
+    }
+
+    private companion object {
+        val Genres = listOf(
+            Genre(id = 28, name = "Action"),
+            Genre(id = 35, name = "Comedy")
+        )
+    }
+}

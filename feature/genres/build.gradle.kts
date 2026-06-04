@@ -40,4 +40,9 @@ dependencies {
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.androidx.compose)
+
+    testImplementation(project(":core:testing"))
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
 }
