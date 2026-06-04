@@ -1,5 +1,6 @@
 package com.papay.themoviedb.core.data.cache
 
+import com.papay.themoviedb.core.data.testing.assertThrows
 import com.papay.themoviedb.core.model.Genre
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -96,24 +97,6 @@ class RemoteFirstCacheTest {
         coVerifyOrder {
             cacheOperations.fetchRemote()
             cacheOperations.readCache()
-        }
-    }
-
-    private suspend inline fun <reified T : Throwable> assertThrows(
-        crossinline block: suspend () -> Unit
-    ): T {
-        return try {
-            block()
-            throw AssertionError("Expected ${T::class.java.simpleName} to be thrown.")
-        } catch (throwable: Throwable) {
-            if (throwable is T) {
-                throwable
-            } else {
-                throw AssertionError(
-                    "Expected ${T::class.java.simpleName}, but was ${throwable::class.java.simpleName}.",
-                    throwable
-                )
-            }
         }
     }
 
