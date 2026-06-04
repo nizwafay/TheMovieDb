@@ -101,16 +101,35 @@ android {
     }
 }
 
-tasks.register<Copy>("copyReleaseReadableApk") {
-    from(layout.buildDirectory.file("outputs/apk/release/app-release.apk"))
-    into(layout.buildDirectory.dir("outputs/apk/readable/release"))
-    rename {
-        "$apkBaseName-v$appVersionName-$appVersionCode-release.apk"
+val releaseApkFile = layout.buildDirectory.file("outputs/apk/release/app-release.apk")
+val readableReleaseApkFile = layout.buildDirectory.file(
+    "outputs/apk/release/$apkBaseName-v$appVersionName-$appVersionCode-release.apk"
+)
+
+tasks.register("renameReleaseApk") {
+    inputs.file(releaseApkFile)
+    outputs.file(readableReleaseApkFile)
+
+    doLast {
+        val sourceFile = releaseApkFile.get().asFile
+        val targetFile = readableReleaseApkFile.get().asFile
+
+        if (!sourceFile.exists()) {
+            return@doLast
+        }
+
+        if (targetFile.exists()) {
+            targetFile.delete()
+        }
+
+        check(sourceFile.renameTo(targetFile)) {
+            "Could not rename ${sourceFile.name} to ${targetFile.name}."
+        }
     }
 }
 
 tasks.matching { task -> task.name == "assembleRelease" }.configureEach {
-    finalizedBy("copyReleaseReadableApk")
+    finalizedBy("renameReleaseApk")
 }
 
 dependencies {

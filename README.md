@@ -8,7 +8,7 @@ An Android movie discovery app built with Jetpack Compose and The Movie Database
 | --- | --- | --- | --- |
 | <img src="docs/screenshots/genres.jpeg" alt="Genres screen" width="180"> | <img src="docs/screenshots/movie-list.jpeg" alt="Movies by genre screen" width="180"> | <img src="docs/screenshots/movie-detail.jpeg" alt="Movie detail screen" width="180"> | <img src="docs/screenshots/reviews.jpeg" alt="Reviews screen" width="180"> |
 
-For quick install, use the shared APK: [Download TheMovieDb APK](https://drive.google.com/file/d/1hue0OCPm4r5_MpGHlD48UP7197-jrxBH/view?usp=sharing).
+For quick install, use the shared APK: [Download TheMovieDb APK](https://drive.google.com/file/d/1Bf_mpMhwpHHihsqwCAJNj1reTypczze-/view?usp=sharing).
 
 ## Highlights
 
