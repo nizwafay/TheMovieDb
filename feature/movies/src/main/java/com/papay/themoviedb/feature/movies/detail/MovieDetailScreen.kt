@@ -25,9 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -39,6 +36,7 @@ import com.papay.themoviedb.core.model.MovieReview
 import com.papay.themoviedb.core.model.MovieVideo
 import com.papay.themoviedb.core.model.SpokenLanguage
 import com.papay.themoviedb.core.ui.DateFormatter
+import com.papay.themoviedb.core.ui.LazyListLoadMoreEffect
 import com.papay.themoviedb.core.ui.LoadingContent
 import com.papay.themoviedb.core.ui.UiLoadState
 import com.papay.themoviedb.core.ui.UiMessage
@@ -115,22 +113,16 @@ private fun MovieDetailContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-    val shouldLoadMoreReviews = remember {
-        derivedStateOf {
-            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            val totalItems = listState.layoutInfo.totalItemsCount
-            totalItems > 0 && lastVisibleIndex >= totalItems - LoadMoreThreshold
-        }
-    }
 
-    LaunchedEffect(reviews.size, canLoadMoreReviews, isLoadingReviews, isShowingAllReviews) {
-        snapshotFlow { shouldLoadMoreReviews.value }
-            .collect { shouldLoad ->
-                if (isShowingAllReviews && shouldLoad && canLoadMoreReviews && !isLoadingReviews) {
-                    onLoadMoreReviews()
-                }
-            }
-    }
+    LazyListLoadMoreEffect(
+        listState = listState,
+        itemCount = reviews.size,
+        canLoadMore = canLoadMoreReviews,
+        isLoadingMore = isLoadingReviews,
+        enabled = isShowingAllReviews,
+        threshold = LoadMoreThreshold,
+        onLoadMore = onLoadMoreReviews
+    )
 
     LaunchedEffect(isShowingAllReviews) {
         if (isShowingAllReviews) {

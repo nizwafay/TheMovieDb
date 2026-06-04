@@ -10,6 +10,7 @@ import com.papay.themoviedb.core.model.MovieDetail
 import com.papay.themoviedb.core.model.MoviePage
 import com.papay.themoviedb.core.model.MovieReviewPage
 import com.papay.themoviedb.core.model.MovieVideo
+import com.papay.themoviedb.core.model.PaginationDefaults
 import kotlinx.coroutines.withContext
 
 class MovieRepositoryImpl(
@@ -45,7 +46,7 @@ class MovieRepositoryImpl(
             )
         }
 
-        val cachedMovies = if (page == FirstPage) {
+        val cachedMovies = if (page == PaginationDefaults.FirstPage) {
             movieLocalDataSource.getMoviesByGenre(genreId = genreId)
         } else {
             emptyList()
@@ -55,18 +56,14 @@ class MovieRepositoryImpl(
             DataResult(
                 data = MoviePage(
                     movies = cachedMovies,
-                    page = FirstPage,
-                    totalPages = remoteResult.getOrNull()?.totalPages ?: FirstPage
+                    page = PaginationDefaults.FirstPage,
+                    totalPages = remoteResult.getOrNull()?.totalPages ?: PaginationDefaults.FirstPage
                 ),
                 fallbackError = remoteResult.exceptionOrNull()
             )
         } else {
             DataResult(data = remoteResult.getOrThrow())
         }
-    }
-
-    private companion object {
-        const val FirstPage = 1
     }
 
     override suspend fun getMovieVideos(movieId: Int): List<MovieVideo> = withContext(dispatcherProvider.io) {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.papay.themoviedb.core.domain.usecase.GetGenreUseCase
 import com.papay.themoviedb.core.domain.usecase.GetMoviesByGenreUseCase
+import com.papay.themoviedb.core.model.PaginationDefaults
 import com.papay.themoviedb.core.ui.UiLoadState
 import com.papay.themoviedb.core.ui.emptyUiMessageIf
 import com.papay.themoviedb.core.ui.toUiMessage
@@ -48,7 +49,7 @@ class MovieListViewModel(
             runCatching {
                 getMoviesByGenre(
                     genreId = genreId,
-                    page = FirstPage
+                    page = PaginationDefaults.FirstPage
                 )
             }
                 .onSuccess { result ->
@@ -139,7 +140,4 @@ class MovieListViewModel(
             movies.isNotEmpty()
     }
 
-    private companion object {
-        const val FirstPage = 1
-    }
 }

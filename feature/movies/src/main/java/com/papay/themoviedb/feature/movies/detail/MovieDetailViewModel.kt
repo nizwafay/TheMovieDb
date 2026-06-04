@@ -10,6 +10,7 @@ import com.papay.themoviedb.core.domain.usecase.GetMovieYoutubeTrailerUseCase
 import com.papay.themoviedb.core.model.MovieDetail
 import com.papay.themoviedb.core.model.MovieReviewPage
 import com.papay.themoviedb.core.model.MovieVideo
+import com.papay.themoviedb.core.model.PaginationDefaults
 import com.papay.themoviedb.core.ui.UiLoadState
 import com.papay.themoviedb.core.ui.toUiMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +53,7 @@ class MovieDetailViewModel(
                 val detail = getMovieDetail(movieId = movieId)
                 val trailer = runCatching { getMovieYoutubeTrailer(movieId = movieId) }.getOrNull()
                 val reviewsResult = runCatching {
-                    getMovieReviews(movieId = movieId, page = FirstPage)
+                    getMovieReviews(movieId = movieId, page = PaginationDefaults.FirstPage)
                 }
                 MovieDetailResult(
                     detail = detail,
@@ -178,7 +179,4 @@ class MovieDetailViewModel(
         val reviewsError: Throwable?
     )
 
-    private companion object {
-        const val FirstPage = 1
-    }
 }
