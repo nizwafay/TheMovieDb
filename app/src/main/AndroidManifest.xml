@@ -16,6 +16,7 @@
         android:theme="@style/Theme.TheMovieDb">
         <activity
             android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@style/Theme.TheMovieDb">
             <intent-filter>

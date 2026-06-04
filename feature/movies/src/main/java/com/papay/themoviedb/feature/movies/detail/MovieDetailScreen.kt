@@ -1,5 +1,10 @@
 package com.papay.themoviedb.feature.movies.detail
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -8,13 +13,14 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,9 +30,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,6 +67,8 @@ fun MovieDetailScreen(
     onHideAllReviews: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    LockMovieDetailOrientation()
+
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
         when {
             uiState.loadState == UiLoadState.InitialLoading -> LoadingContent(
@@ -97,6 +108,20 @@ fun MovieDetailScreen(
 }
 
 @Composable
+private fun LockMovieDetailOrientation() {
+    val activity = LocalContext.current.findActivity() ?: return
+
+    DisposableEffect(activity) {
+        val previousOrientation = activity.requestedOrientation
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
+        onDispose {
+            activity.requestedOrientation = previousOrientation
+        }
+    }
+}
+
+@Composable
 private fun MovieDetailContent(
     detail: MovieDetail,
     trailer: MovieVideo?,
@@ -113,6 +138,7 @@ private fun MovieDetailContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     LazyListLoadMoreEffect(
         listState = listState,
@@ -130,80 +156,98 @@ private fun MovieDetailContent(
         }
     }
 
-    Column(modifier = modifier) {
-        trailer?.let { movieTrailer ->
-            TrailerPlayer(movieTrailer = movieTrailer)
+    BoxWithConstraints(modifier = modifier) {
+        if (isLandscape && trailer != null) {
+            TrailerPlayer(
+                movieTrailer = trailer,
+                modifier = Modifier.fillMaxSize()
+            )
+            return@BoxWithConstraints
         }
 
-        AnimatedContent(
-            targetState = isShowingAllReviews,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            transitionSpec = {
-                if (targetState) {
-                    slideInVertically { height -> height } + fadeIn() togetherWith
-                        slideOutVertically { height -> -height / 3 } + fadeOut()
-                } else {
-                    slideInVertically { height -> -height / 3 } + fadeIn() togetherWith
-                        slideOutVertically { height -> height } + fadeOut()
-                }
-            },
-            label = "MovieDetailReviewsTransition"
-        ) { showingAllReviews ->
-            if (showingAllReviews) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    CommentsPanelHeader(
-                        totalReviews = totalReviews,
-                        onCloseClick = onHideAllReviews,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+        val trailerHeight = minOf(
+            maxWidth / VideoAspectRatio,
+            maxHeight * MaxTrailerHeightFraction
+        )
 
+        Column(modifier = Modifier.fillMaxSize()) {
+            trailer?.let { movieTrailer ->
+                TrailerPlayer(
+                    movieTrailer = movieTrailer,
+                    modifier = Modifier.height(trailerHeight)
+                )
+            }
+
+            AnimatedContent(
+                targetState = isShowingAllReviews,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                transitionSpec = {
+                    if (targetState) {
+                        slideInVertically { height -> height } + fadeIn() togetherWith
+                            slideOutVertically { height -> -height / 3 } + fadeOut()
+                    } else {
+                        slideInVertically { height -> -height / 3 } + fadeIn() togetherWith
+                            slideOutVertically { height -> height } + fadeOut()
+                    }
+                },
+                label = "MovieDetailReviewsTransition"
+            ) { showingAllReviews ->
+                if (showingAllReviews) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        CommentsPanelHeader(
+                            totalReviews = totalReviews,
+                            onCloseClick = onHideAllReviews,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        LazyColumn(
+                            state = listState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            contentPadding = PaddingValues(
+                                top = 24.dp,
+                                bottom = 24.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            ReviewListItems(
+                                reviews = reviews,
+                                isLoadingReviews = isLoadingReviews,
+                                reviewMessage = reviewMessage,
+                                onRetryReviews = onRetryReviews
+                            )
+                        }
+                    }
+                } else {
                     LazyColumn(
                         state = listState,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                        modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(
                             top = 24.dp,
                             bottom = 24.dp
                         ),
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
-                        ReviewListItems(
-                            reviews = reviews,
-                            isLoadingReviews = isLoadingReviews,
-                            reviewMessage = reviewMessage,
-                            onRetryReviews = onRetryReviews
-                        )
-                    }
-                }
-            } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(
-                        top = 24.dp,
-                        bottom = 24.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    item {
-                        MovieInfo(detail = detail)
-                    }
+                        item {
+                            MovieInfo(detail = detail)
+                        }
 
-                    item {
-                        ReviewPreview(
-                            review = reviews.firstOrNull(),
-                            totalReviews = totalReviews,
-                            isLoadingReviews = isLoadingReviews,
-                            reviewMessage = reviewMessage,
-                            onClick = onShowAllReviews,
-                            onRetryClick = onRetryReviews,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        )
+                        item {
+                            ReviewPreview(
+                                review = reviews.firstOrNull(),
+                                totalReviews = totalReviews,
+                                isLoadingReviews = isLoadingReviews,
+                                reviewMessage = reviewMessage,
+                                onClick = onShowAllReviews,
+                                onRetryClick = onRetryReviews,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -223,9 +267,7 @@ private fun TrailerPlayer(
         YouTubePlayer(
             videoKey = movieTrailer.key,
             title = movieTrailer.name,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(VideoAspectRatio)
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -325,7 +367,19 @@ private fun ChipSection(
 }
 
 private const val VideoAspectRatio = 16f / 9f
+private const val MaxTrailerHeightFraction = 0.45f
 private const val LoadMoreThreshold = 4
+
+private fun Context.findActivity(): Activity? {
+    var currentContext = this
+    while (currentContext is ContextWrapper) {
+        if (currentContext is Activity) {
+            return currentContext
+        }
+        currentContext = currentContext.baseContext
+    }
+    return null
+}
 
 @Preview(showBackground = true)
 @Composable
