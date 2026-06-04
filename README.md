@@ -2,6 +2,14 @@
 
 An Android movie discovery app built with Jetpack Compose and The Movie Database (TMDB) API. The app starts from a genre-first experience, lets users browse movies by genre, opens movie details, plays the first YouTube trailer, and shows user reviews with pagination.
 
+## Screenshots
+
+| Genres | Movies By Genre | Movie Detail | Reviews |
+| --- | --- | --- | --- |
+| <img src="docs/screenshots/genres.jpeg" alt="Genres screen" width="180"> | <img src="docs/screenshots/movie-list.jpeg" alt="Movies by genre screen" width="180"> | <img src="docs/screenshots/movie-detail.jpeg" alt="Movie detail screen" width="180"> | <img src="docs/screenshots/reviews.jpeg" alt="Reviews screen" width="180"> |
+
+For quick install, use the shared APK: [Download TheMovieDb APK](https://drive.google.com/file/d/1hue0OCPm4r5_MpGHlD48UP7197-jrxBH/view?usp=sharing).
+
 ## Highlights
 
 - Jetpack Compose UI with Material 3
@@ -93,6 +101,17 @@ Build the release APK:
 
 Release builds require a valid TMDB read access token. The build fails early if the token is missing or looks like the legacy API key.
 
+The generated local release APK is installable. If no release keystore is configured, Gradle falls back to the debug keystore for local testing. To use a real release keystore, add these values to `local.properties` or environment variables:
+
+```properties
+signing.storeFile=/absolute/or/project/relative/path/to/release.keystore
+signing.storePassword=YOUR_STORE_PASSWORD
+signing.keyAlias=YOUR_KEY_ALIAS
+signing.keyPassword=YOUR_KEY_PASSWORD
+```
+
+Do not commit keystores or signing passwords.
+
 ## JaCoCo
 
 Generate the aggregate JaCoCo report for pure debug unit tests:
@@ -182,6 +201,7 @@ The app uses several baseline protections:
 
 - Release minification with R8
 - Release resource shrinking
+- Installable release APK signing, with external keystore support
 - Android cleartext traffic disabled
 - Backup and device-transfer data excluded
 - Release token validation

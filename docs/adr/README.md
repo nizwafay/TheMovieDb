@@ -12,3 +12,4 @@ Each ADR captures the context, decision, alternatives, and consequences. The goa
 - [0004 - Remote First Cache Strategy](0004-remote-first-cache-strategy.md)
 - [0005 - Pure Unit Test Quality Gates](0005-pure-unit-test-quality-gates.md)
 - [0006 - TMDB Token Handling](0006-tmdb-token-handling.md)
+- [0007 - Release APK Signing](0007-release-apk-signing.md)

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -6,6 +8,31 @@ plugins {
 apply(from = rootProject.file("gradle/tmdb-secrets.gradle.kts"))
 
 val tmdbAccessTokenBuildConfigValue: String by extra
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun signingProperty(name: String): String? {
+    return localProperties.getProperty(name)
+        ?: providers.environmentVariable(name.replace(".", "_").uppercase()).orNull
+}
+
+val releaseStoreFile = signingProperty("signing.storeFile")
+val releaseStorePassword = signingProperty("signing.storePassword")
+val releaseKeyAlias = signingProperty("signing.keyAlias")
+val releaseKeyPassword = signingProperty("signing.keyPassword")
+val hasReleaseSigningConfig = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+).all { value -> !value.isNullOrBlank() }
+val appVersionCode = 1
+val appVersionName = "1.0"
+val apkBaseName = "TheMovieDb"
 
 android {
     namespace = "com.papay.themoviedb"
@@ -20,8 +47,8 @@ android {
         applicationId = "com.papay.themoviedb"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -32,10 +59,24 @@ android {
         )
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseSigningConfig) {
+                storeFile = rootProject.file(checkNotNull(releaseStoreFile))
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            } else {
+                initWith(getByName("debug"))
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -58,6 +99,18 @@ android {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
+}
+
+tasks.register<Copy>("copyReleaseReadableApk") {
+    from(layout.buildDirectory.file("outputs/apk/release/app-release.apk"))
+    into(layout.buildDirectory.dir("outputs/apk/readable/release"))
+    rename {
+        "$apkBaseName-v$appVersionName-$appVersionCode-release.apk"
+    }
+}
+
+tasks.matching { task -> task.name == "assembleRelease" }.configureEach {
+    finalizedBy("copyReleaseReadableApk")
 }
 
 dependencies {
